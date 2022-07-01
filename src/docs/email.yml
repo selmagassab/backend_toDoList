@@ -1,0 +1,29 @@
+paths:
+  /email/:
+    post:
+      summary: send email
+      tags: [Email]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                subject:
+                  type: string
+                text:
+                  type: string
+              exemple:
+                email: fake@example.com
+                subject: fake subject
+                text: fake text
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: 'email sent with success'

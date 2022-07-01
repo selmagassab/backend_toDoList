@@ -1,0 +1,57 @@
+version: '3'
+
+services:
+  node-app-prod:
+    build: ./
+    container_name: node-app-prod
+    env_file: .env
+    restart: unless-stopped
+    environment:
+      - PORT=5000
+      - NODE_ENV=production
+      - MONGO_URL=mongodb://mongodb_node_prod:27017/inaya-app-prod
+      - JWT_SECRET=thisisasamplesecret
+      - JWT_ACCESS_EXPIRATION_MINUTES=30000
+      - JWT_REFRESH_EXPIRATION_DAYS=30000
+      - SMTP_HOST=smtp.zoho.com
+      - SMTP_PORT=465
+      - SMTP_USERNAME=-----@zohomail.com
+      - SMTP_PASSWORD=ygLhFzyrAN74
+      - EMAIL_FROM=-----@zohomail.com
+    # command: yarn start
+    # depends_on:
+    #   - mongodb_node_prod
+    volumes:
+      - .:/usr/src/node-app
+    # networks:
+    #   - ngnix-net
+    
+  mongodb_node_prod:
+    image: mongo:latest
+    container_name: mongodb_node_prod
+    restart: unless-stopped
+    # env_file: .env
+    # networks:
+    #   - ngnix-net
+    volumes:
+      - dbdata_prod:/data/db
+    # ports:
+    #   - "27017:27017"
+
+  # mongodb_node_prod:
+  #   image: mongo:4.2.1-bionic
+  #   restart: unless-stopped
+  #   # ports:
+  #   #   - '27017:27017'
+  #   volumes:
+  #     - dbdata_prod:/data/db
+  #   # networks:
+  #   #   - ngnix-net
+
+volumes:
+  dbdata_prod:
+
+networks:
+  default:
+    external:
+      name: ngnix-net

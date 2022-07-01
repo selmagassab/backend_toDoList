@@ -1,0 +1,252 @@
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+        googleId:
+          type: string
+        facebookId:
+          type: string
+        status:
+          type: object
+          properties:
+            confirmed:
+              type: boolean
+            blocked:
+              type: boolean
+        image:
+          type: object
+          properties:
+            uploaded:
+              type: string
+            facebook:
+              type: string
+            google:
+              type: string
+        situationMatrimonial:
+          type: string
+        doYouHaveACar:
+          type: string
+        professionalSituation:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+          format: email
+        username:
+          type: string
+        password:
+          type: string
+        phoneNumber:
+          type: string
+        carTypeWanted:
+          type: string
+        gender:
+          type: string
+          enum: [Male, female]
+        birthdate:
+          type: date
+        address:
+          type: object
+          properties:
+            address:
+              type: string
+            postalCode:
+              type: string
+            ville:
+              type: string
+        carPublication:
+          $ref: '#/components/schemas/CarPublication'
+        favoris:
+          $ref: '#/components/schemas/CarPublication'
+        comments:
+          $ref: '#/components/schemas/Comment'
+        requestService:
+          $ref: '#/components/schemas/RequestService'
+        requestBuyCar:
+          $ref: '#/components/schemas/CarPublication'
+        notifications:
+          type: array
+          items:
+            type: object
+            properties:
+              title:
+                type: string
+              text:
+                type: string
+              type:
+                type: string
+              url:
+                type: string
+              isSticky:
+                type: boolean
+              isOpened:
+                type: boolean
+              createdAt:
+                type: date
+        role:
+          type: string
+          enum: [user, admin, partner, operator]
+      example:
+        id: 5ebac534954b54139806c112
+        email: fake@example.com
+        name: fake name
+        role: user
+    Comment:
+      type: object
+      properties:
+        id:
+          type: string
+        status:
+          type: string
+        description:
+          type: string
+        user:
+          $ref: '#/components/schemas/User'
+        carPublication:
+          $ref: '#/components/schemas/CarPublication'
+    CarPublication:
+      type: object
+      properties:
+        status:
+          type: string
+        carOwner:
+          $ref: '#/components/schemas/User'
+        phoneNumber:
+          type: string
+        description:
+          type: string
+        brand:
+          type: string
+        comment:
+          type: array
+          items:
+            $ref: '#/components/schemas/Comment'
+        rating:
+          type: array
+          items:
+            type: object
+            properties:
+              userId:
+                $ref: '#/components/schemas/User'
+              rate:
+                type: number
+        type:
+          type: string
+        model:
+          type: string
+        cylinderCapacity:
+          type: string
+        door:
+          type: string
+        dateFirstCirculation:
+          type: date
+        mileage:
+          type: string
+        price:
+          type: string
+        address:
+          type: string
+        governorates:
+          type: string
+        subdivision:
+          type: string
+        bodyWork:
+          type: string
+        energy:
+          type: string
+        fiscalPower:
+          type: string
+        gearBox:
+          type: string
+        transmission:
+          type: string
+        color:
+          type: string
+        condition:
+          type: string
+        outdoorEquipment:
+          type: array
+        securityEquipment:
+          type: array
+        interiorEquipment:
+          type: array
+      example:
+        status: sold
+    RequestService:
+      type: object
+    Token:
+      type: object
+      properties:
+        token:
+          type: string
+        expires:
+          type: string
+          format: date-time
+      example:
+        token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1ZWJhYzUzNDk1NGI1NDEzOTgwNmMxMTIiLCJpYXQiOjE1ODkyOTg0ODQsImV4cCI6MTU4OTMwMDI4NH0.m1U63blB0MLej_WfB7yC2FTMnCziif9X8yzwDEfJXAg
+        expires: 2020-05-12T16:18:04.793Z
+    AuthTokens:
+      type: object
+      properties:
+        access:
+          $ref: '#/components/schemas/Token'
+        refresh:
+          $ref: '#/components/schemas/Token'
+
+    Error:
+      type: object
+      properties:
+        code:
+          type: number
+        message:
+          type: string
+
+  responses:
+    DuplicateEmail:
+      description: Email already taken
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: 400
+            message: Email already taken
+    Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: 401
+            message: Please authenticate
+    Forbidden:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: 403
+            message: Forbidden
+    NotFound:
+      description: Not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: 404
+            message: Not found
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

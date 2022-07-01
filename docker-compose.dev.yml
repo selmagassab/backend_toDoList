@@ -1,0 +1,63 @@
+version: '3'
+
+services:
+  node-app-dev:
+    # command: yarn dev -L
+    build: ./
+    container_name: node-app-dev
+    restart: unless-stopped
+    # env_file: .env
+    environment:
+      - PORT=5000
+      - NODE_ENV=development_server
+      - MONGO_URL=mongodb://mongodb_node_dev:27017/inaya-app-dev
+      - JWT_SECRET=thisisasamplesecret
+      - JWT_ACCESS_EXPIRATION_MINUTES=30000
+      - JWT_REFRESH_EXPIRATION_DAYS=30000
+      - SMTP_HOST=smtp.zoho.com
+      - SMTP_PORT=465
+      - SMTP_USERNAME=-----@zohomail.com
+      - SMTP_PASSWORD=ygLhFzyrAN74
+      - EMAIL_FROM=-----@zohomail.com
+    # command: yarn start  
+    # ports:
+    #   - '3000:3000'
+    # depends_on:
+    #   - mongodb_node_dev
+    volumes:
+      - .:/usr/src/node-app
+    # networks:
+    #   - ngnix-net
+
+  mongodb_node_dev:
+    image: mongo:latest
+    container_name: mongodb_node_dev
+    restart: unless-stopped
+    # env_file: .env
+    # environment:
+    #   MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME_DEV}
+    #   MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD_DEV}
+    # networks:
+    #   - ngnix-net
+    volumes:
+      - dbdata_dev:/data/db
+    # ports:
+    #   - "27017:27017"
+
+  # mongodb_node_dev:
+  #   image: mongo:4.2.1-bionic
+  #   restart: unless-stopped
+  #   # ports:
+  #   #   - '27017:27017'
+  #   volumes:
+  #     - dbdata_dev:/data/db
+  #   # networks:
+  #   #   - ngnix-net
+
+volumes:
+  dbdata_dev:
+
+networks:
+  default:
+    external:
+      name: ngnix-net

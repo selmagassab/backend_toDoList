@@ -1,0 +1,248 @@
+paths:
+  /patient/create-patient:
+    post:
+      summary: Create a new patient
+      description: Only admins , doctor , Secretary can create patients.
+      tags: [Users]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - firstName
+                - lastName
+                - assured
+              properties:
+                firstName:
+                  type: string
+                lastName:
+                  type: string
+                gender:
+                  type: string
+                  enum: [Male, Female]
+                birthdate:
+                  type: date
+                email:
+                  type: string
+                  format: email
+                  description: must be unique
+                phoneNumber:
+                  type: number
+                cin:
+                  type: number
+                adress:
+                  type: object
+                  properties:
+                    country:
+                      type: string
+                    governorates:
+                      type: string
+                    subdivision:
+                      type: string
+                    address:
+                      type: string
+                    postalCode:
+                      type: string
+                insurancePlan:
+                  type: object
+                  properties:
+                    cnam:
+                      type: object
+                      required:
+                        - num
+                        - dateValidation
+                        - filliere
+                      properties:
+                        num:
+                          type: string
+                        dateValidation:
+                          type: date
+                        filliere:
+                          type: string
+                          enum: [public, prive, remboursement]
+                    other:
+                      type: string
+              example:
+                firstName: fake name
+                lastName: fake last name
+                gender: male
+                birthdate: "2000-07-13T00:00:00.000+00:00"
+                email: fake@example.com
+                cin: 01234567
+                assured: false
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                 $ref: '#/components/schemas/User'
+        "400":
+          $ref: '#/components/responses/DuplicateEmail'
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+  
+  /patient/get-all-patients:        
+    get:
+      summary: Get office's patients or select by patient by its firstName,lastName,cin
+      description: Only admins , doctor , Secretary can get patients of their office.
+      tags: [Users]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: search
+          schema:
+            type: string
+          description: the search tag
+        - in: query
+          name: sortBy
+          schema:
+            type: string
+          description: sort by query in the form of field:desc/asc (ex. name:asc)
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            minimum: 1
+          default: 10
+          description: Maximum number of users
+        - in: query
+          name: page
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+          description: Page number
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  results:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/User'
+                      type: object
+                      propperties:
+                        id:
+                          type: ojectId
+                        userName:
+                          type: string
+                        lastName:
+                          type: string
+                  page:
+                    type: integer
+                    example: 1
+                  limit:
+                    type: integer
+                    example: 10
+                  totalPages:
+                    type: integer
+                    example: 1
+                  totalResults:
+                    type: integer
+                    example: 1
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+  
+  /get-patient-details/{id}:
+    get:
+      summary: Get patient 
+      description: Logged in doctors, secretary can fetch their patient's informations. 
+      tags: [Users]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: Patient id
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                 $ref: '#/components/schemas/User'
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "404":
+          $ref: '#/components/responses/NotFound'
+  /update-patient/{id}:
+    put:
+      summary: Update a patient
+      description:  admins,doctors, can update other users.
+      tags: [Users]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: User id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                email:
+                  type: string
+                  format: email
+                  description: must be unique
+                firstName: 
+                  type: string
+                lastName: 
+                  type: string 
+                phoneNumber:
+                  type: number
+                assured:
+                  type: boolean
+                insurancePlan:
+                  type: object
+                password:
+                  type: string
+                  format: password
+                  minLength: 8
+                  description: At least one number and one letter
+              example:
+                name: fake name
+                email: fake@example.com
+                password: password1
+                 
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                 $ref: '#/components/schemas/User'
+        "400":
+          $ref: '#/components/responses/DuplicateEmail'
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "404":
+          $ref: '#/components/responses/NotFound'

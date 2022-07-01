@@ -1,0 +1,41 @@
+paths:
+  /file/upload:
+    post:
+      summary: Upload File
+      tags: [File]
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: 'File upload successful'
+  /file/download/{id}:
+    get:
+      summary: Download File
+      tags: [File]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: File id
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: 'File download successful'

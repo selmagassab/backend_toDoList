@@ -17,7 +17,7 @@ const router = express.Router();
 // router.get('/me', auth(), userController.userdata);
 // router.post('/create-admin', validate(userValidation.createAdmin), userController.createAdmin);
 router.get('/get-all-users', userController.getUsers);
-// router.post('/create-user/:role', validate(userValidation.createUser), userController.createUser);
+router.post('/create-user', userController.createUser);
 // router.put('/:id', auth('admin'), userController.updateUser);
 // router.delete('/:id', validate(userValidation.deleteUser), userController.deleteUser);
 // router.get('/get-user-details/:id', auth('admin'), userController.userInfoByAdmin);

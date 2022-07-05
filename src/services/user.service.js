@@ -4,26 +4,17 @@ const { roles } = require('../config/roles');
 const { User } = require('../models');
 const ApiError = require('../utils/ApiError');
 const { errors } = require('../utils/errors.constant');
-const genUsername = require('../utils/genUsername');
+// const genUsername = require('../utils/genUsername');
 const { populatePatientConsultation } = require('../utils/populationPatterns');
 const { userNameCin } = require('../utils/searchPatterns');
 
 /**
  * Create a user
- * @param {Object} userBody
+ * @param {Object} userBodyl
  * @returns {Promise<User>}
  */
 const createUser = async (userBody) => {
-  let exist = false;
-  let userName;
-  do {
-    userName = genUsername(userBody.firstName, userBody.lastName);
-    // eslint-disable-next-line no-await-in-loop
-    // eslint-disable-next-line security/detect-non-literal-fs-filename
-    exist = await User.exists({ userName });
-  } while (exist);
-
-  const user = await User.create({ ...userBody, userName, password: userName });
+  const user = await User.create(userBody);
   return user;
 };
 
@@ -34,11 +25,6 @@ const createUser = async (userBody) => {
  */
 const queryUsers = async () => {
   const users = await User.find();
-  return users;
-};
-
-const queryPatients = async (filter, options, select, populations) => {
-  const users = await User.paginate(filter, options, select, populations);
   return users;
 };
 
@@ -65,10 +51,6 @@ const getUserById = async (id) => {
     throw new ApiError(httpStatus.NOT_FOUND, errors.USER_NOT_FOUND);
   }
   return user;
-};
-
-const getPatientById = async (id, populateArray) => {
-  return User.findById(id).populate(populateArray);
 };
 
 const searchPatientByName = async (name, myoffice) => {
@@ -101,14 +83,7 @@ const getUserByEmail = async (email) => {
 const getUserByUserName = async (userName) => {
   return User.findOne({ userName });
 };
-/**
- * Get user by office
- * @param {string} office
- * @returns {Promise<User>}
- */
-const getUsersByOffice = async (office) => {
-  return User.find({ office });
-};
+
 /**
  * Update user by id
  * @param {ObjectId} userId
@@ -164,9 +139,6 @@ module.exports = {
   updateUserById,
   deleteUserById,
   getUserByUserName,
-  queryPatients,
-  getPatientById,
-  getUsersByOffice,
   getUsersByUserName,
   searchPatientByName,
   updateUserStatus,

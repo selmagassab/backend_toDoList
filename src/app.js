@@ -8,6 +8,7 @@ const compression = require('compression');
 const cors = require('cors');
 const tasksRouter = require('./routes/task.route');
 const usersRouter = require('./routes/user.route');
+const authRouter = require('./routes/auth.route');
 
 const app = express();
 
@@ -62,6 +63,7 @@ app.get('/', (req, res) => res.sendFile(path.join(`${__dirname}/index.html`)));
 // v1 api routes
 app.use('/tasks', tasksRouter);
 app.use('/users', usersRouter);
+app.use('/auth', authRouter);
 
 // app.use('/v1/patients', limiterPatientSearching);
 

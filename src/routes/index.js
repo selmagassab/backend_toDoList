@@ -1,15 +1,12 @@
 const express = require('express');
 const taskRoute = require('./task.route');
 const userRoute = require('./user.route');
-
-// const { deleteAll } = require('../../services');
+const authRoute = require('./auth.route');
 
 const router = express.Router();
 
 router.use('/tasks', taskRoute);
 router.use('/users', userRoute);
-
-// route for developer delete all database
-// router.delete('/delete-all', deleteAll.deleteAll);
+router.use('/auth', authRoute);
 
 module.exports = router;
